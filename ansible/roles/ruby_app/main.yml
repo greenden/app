@@ -1,0 +1,5 @@
+#
+#- name: install all dependencies
+#  ansible.builtin.command: bundle install
+#  args:
+#    chdir: /var/app/xpaste_practicum

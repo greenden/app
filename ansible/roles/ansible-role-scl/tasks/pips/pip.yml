@@ -1,0 +1,37 @@
+---
+# Mange SCL pips for installed Python versions
+
+- name: "Verify Python: {{ item.python_ver }} exists"
+  stat:
+    path: "/opt/rh/{{ item.python_ver }}/enable"
+  changed_when: false
+  register: scl_python_ver_result
+
+- name: "Install PIP for Python: {{ item.python_ver }}"
+  become: true
+  easy_install:
+    name: pip
+    executable: "/usr/bin/scl enable {{ item.python_ver }} -- easy_install"
+  when: scl_python_ver_result.stat.exists
+
+- name: Create {{ item.python_ver }} PIP wrapper executable
+  become: true
+  copy:
+    dest: "/usr/local/bin/scl-pip-{{ item.python_ver }}-executable"
+    content: |
+      #!/bin/sh
+      source scl_source enable {{ item.python_ver }}
+      exec pip "$@"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+
+- name: "Install PIP: {{ item.name }} for Python: {{ item.python_ver }}"
+  become: true
+  pip:
+    name: "{{ item.name }}"
+    state: "{{ item.state | default('present') }}"
+    version: "{{ item.version | default(omit) }}"
+    extra_args: "{{ item.extra_args | default(omit) }}"
+    executable: "/usr/local/bin/scl-pip-{{ item.python_ver }}-executable"
+  when: scl_python_ver_result.stat.exists

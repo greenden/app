@@ -1,0 +1,4 @@
+---
+- include_tasks: packages/package.yml
+  with_items: "{{ scl_packages }}"
+  when: scl_packages | length > 0

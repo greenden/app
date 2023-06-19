@@ -1,0 +1,6 @@
+roles:
+- src: geerlingguy.postgresql
+- src: geerlingguy.nginx
+- src: smbambling.scl
+collections:
+- name: community.postgresql

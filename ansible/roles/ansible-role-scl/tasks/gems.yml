@@ -1,0 +1,4 @@
+---
+- include_tasks: gems/gem.yml
+  with_items: "{{ scl_ruby_gems }}"
+  when: scl_ruby_gems | length > 0
